@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Kustmammoetboom Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            overflow: hidden;
+        }
+        .quiz-container {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+        }
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 10px;
+        }
+        .options button:hover {
+            background: #ffcc00;
+            color: #000;
+            transform: scale(1.05);
+        }
+        .next-btn, .start-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            background: #ffcc00;
+            color: black;
+            border-radius: 10px;
+        }
+        .next-btn {
+            display: none;
+        }
+        .extra-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .extra-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" id="welcome">
+        <h1 class="animate__animated animate__fadeInDown">Welkom bij de Kustmammoetboom Quiz!</h1>
+        <p class="animate__animated animate__fadeIn">Test je kennis over de Kustmammoetboom en ontdek hoeveel jij weet!</p>
+        <button class="start-btn" onclick="startQuiz()">Start de Quiz</button>
+    </div>
+    <div class="quiz-container" id="quiz-container" style="display: none;">
+        <div id="quiz"></div>
+        <button class="next-btn" onclick="nextQuestion()">Volgende</button>
+    </div>
+    <script>
+        let questions = [
+            { question: "Wat is de Latijnse naam voor de Kustmammoetboom?", options: ["Aurum", "Verba", "Sequoia Sempervirens", "Suspectum Habêre"], correct: 2 },
+            { question: "De boom komt uit New York.", options: ["Waar", "Niet waar"], correct: 1 },
+            { question: "Op welke datum is Donald Trump geboren?", options: ["31 maart", "28 september", "28 juni", "14 juni"], correct: 3 },
+            { question: "Donald Trump is geboren in het jaar 1966.", options: ["Waar", "Niet waar"], correct: 1 },
+            { question: "Hoeveel kinderen heeft Donald Trump?", options: ["4", "5", "1", "2"], correct: 1 },
+            { question: "Wat is de volledige naam van Donald Trump?", options: ["Donald John Trump", "Donald James Trump", "Donald Joseph Trump", "Donald Jeffrey Trump"], correct: 0 },
+            { question: "In welk jaar werd Donald Trump voor de eerste keer president van de VS?", options: ["2015", "2016", "2017", "2018"], correct: 2 },
+            { question: "Welke politieke partij vertegenwoordigde Trump tijdens zijn presidentschap?", options: ["Democratische Partij", "Republikeinse Partij", "Onafhankelijke Partij", "Libertaire Partij"], correct: 1 },
+            { question: "Wat was de slogan van Donald Trump tijdens zijn verkiezingscampagne?", options: ["Yes We Can", "Make America Great Again", "Stronger Together", "Forward"], correct: 1 },
+            { question: "Waar werd Donald Trump geboren?", options: ["Queens (New York)", "Los Angeles", "Chicago", "Miami"], correct: 0 },
+            { question: "Welke reality-tv-show presenteerde Donald Trump?", options: ["Shark Tank", "The Apprentice", "Survivor", "Big Brother"], correct: 1 },
+            { question: "Hoeveel impeachmentprocedures heeft Trump doorstaan?", options: ["Geen", "Eén", "Twee", "Drie"], correct: 2 },
+            { question: "Wie was de vicepresident van Trump?", options: ["Mike Pence", "Joe Biden", "Kamala Harris", "Hillary Clinton"], correct: 0 }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        let quizDiv = document.getElementById("quiz");
+        
+        function startQuiz() {
+            document.getElementById("welcome").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            loadQuestion();
+        }
+        
+        function loadQuestion() {
+            let q = questions[currentQuestion];
+            quizDiv.innerHTML = `<div class='question animate__animated animate__fadeIn'>${q.question}</div>`;
+            let optionsHTML = "";
+            q.options.forEach((opt, index) => {
+                optionsHTML += `<button onclick='checkAnswer(${index})'>${opt}</button>`;
+            });
+            quizDiv.innerHTML += `<div class='options'>${optionsHTML}</div>`;
+        }
+        
+        function checkAnswer(index) {
+            let q = questions[currentQuestion];
+            let buttons = document.querySelectorAll('.options button');
+            if (index === q.correct) {
+                new Howl({ src: ['https://www.soundbible.com/mp3/applause-01.wav'] }).play();
+                buttons[index].style.background = "#28a745";
+                score++;
+            } else {
+                new Howl({ src: ['https://www.soundbible.com/mp3/Error%20Bell%20-%20A%20SoundBible.com%20Creation.mp3'] }).play();
+                buttons[index].style.background = "#dc3545";
+                buttons[q.correct].style.background = "#28a745";
+            }
+            buttons.forEach(button => button.disabled = true);
+            document.querySelector('.next-btn').style.display = "block";
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+                document.querySelector('.next-btn').style.display = "none";
+            } else {
+                quizDiv.innerHTML = `<h2 class='animate__animated animate__zoomIn'>Gefeliciteerd! Je hebt de quiz voltooid!</h2>
+                                     <p>Je hebt <strong>${score}</strong> van de ${questions.length} vragen goed!</p>
+                                     <button class='start-btn' onclick='restartQuiz()'>Opnieuw spelen</button>
+                                     <a class='extra-btn' href='https://montessorischoolwassenaar-my.sharepoint.com/:w:/g/personal/paul4583_montessorischoolwassenaar_nl/EU2XEI-QrXFNoP_kqDqLbroBbMFknvCjR9Qhyw7LbLTqaA?e=Vw9qEL' target='_blank'>Bekijk ook mijn Word document</a>`;
+                document.querySelector('.next-btn').style.display = "none";
+            }
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("welcome").style.display = "block";
+            document.getElementById("quiz-container").style.display = "none";
+        }
+    </script>
+</body>
+</html>
